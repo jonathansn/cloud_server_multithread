@@ -1,0 +1,10 @@
+{
+    
+    "username": "Julian0Gomes",
+    "password": "Juliano 03",
+    "strictTls": true,
+    "pooling": 10,
+    "files.associations": {
+        "acoes.h": "c"
+    }
+}
