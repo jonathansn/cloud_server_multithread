@@ -45,36 +45,36 @@ O modo padrão para programas de socket é Blocking, porém utilizamos o metodo 
 - void setNonBlock(int fd);
 - void interruptHandler(int sig);
 
-#### setupAndConnect()
+### setupAndConnect()
 
-##### Declaração:
+** Declaração: **
 - void setupAndConnect(struct [address serveraddr], struct [hostname], int [socket descriptor], long [port]);
 
-##### Definição:
+** Definição: **
 - Utilizamos para realizar o setup da conexão.
 
-#####  Funcionamento:
+** Funcionamento: **
 1. Utilizamos memset para preencher a memória com valores 0.
 2. Configuramos as variáveis de conexão para serverAddr.
 3. O cliente tenta realizar uma conexão com o servidor, sendo que um retorno da função connect() < 0 significa que houve um erro ao tentar conectar.
 
-#### setNonBlock()
+### setNonBlock()
 
-##### Declaração:
+** Declaração: **
 - void setNonBlock(int [file_descriptor]);
 
-##### Definição:
+** Definição: **
 - Utilizado para definirmos as chamadas sockets para NONBLOCK
 
-##### Funcionamento:
+** Funcionamento: **
 1. Utilizamos a função fcntl(fd, F_GETFL) com o parâmetro F_GETFL que retorna as flags do fd correspondente.
 2. Atribuimos o retorno a variável 'flags' e verificamos se há alguma flag atribuída.
 3. Se haver alguma flag atribuída atribuimos a flag o modo nonblock pelo parâmetro O_NONBLOCK
 4. Concluímos utilizando a função fcntl(fd, F_SETFL, flags) para definir a flag do fd
 
-#### interruptHandler()
+### interruptHandler()
 
-Definição:
+** Definição: **
 - void interruptHandler(int sig_unused)
 
 
