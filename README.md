@@ -1,23 +1,21 @@
 # FEATURES
 
-## MASTER SERVER
-
-### MULTITHREADING:
+#### MULTITHREADING:
 O servidor consistirá em n threads para realizar o controle das conexões, mensagens e chamadas de funções executadas no servidor. Um conjunto de n encadeamentos estará sempre pronto para executar/atender solicitações de entrada.
 
-### QUEUING
+#### QUEUING
 O encadeamento das filas estará escutando continuamente a porta "p" para solicitações de entrada. Assim que uma nova solicitação chegar ao servidor master_server, ela será inserida na fila pronta.
 
-### SCHEDULING
+#### SCHEDULING
 A política de agendamento a ser usada é definida através da opção [–s sched] quando o servidor master_slave for iniciado pela primeira vez. As políticas disponíveis são First Come First Serve (FCFS) e Shortest Job First (SJF).
 
-### SYCHNRONIZATION
+#### SYCHNRONIZATION
 Para garantir que protegemos a fila pronta e outras estruturas de dados compartilhadas em vários encadeamentos para evitar condições de corrida. Os bloqueios de mutex foram implementados para o mesmo.
 
-### NOBLOCKING
+#### NOBLOCKING
 O modo padrão para programas de socket é Blocking, porém utilizamos o metodo Nonblocking. Isso significa que para chamadas FCNTL () ou IOCTL (), o programa de chamada continuará, mesmo que a chamada de E/S possa não ter sido concluída. Se a chamada de E/S não puder ser concluída, ela retornará com ERRNO EWOULDBLOCK. Para testarmos a conclusão de qualquer chamada de soquete, utlizamos a função SELECT() que retorna EWOULDBLOCK.
 
-# COMPILE AND RUN
+## COMPILE AND RUN
 
 ### MASTER_SERVER
 
@@ -47,7 +45,7 @@ O modo padrão para programas de socket é Blocking, porém utilizamos o metodo 
 - void setNonBlock(int fd);
 - void interruptHandler(int sig);
 
-##### setupAndConnect
+#### setupAndConnect()
 
 Definição:
 - void setupAndConnect(struct [address serveraddr], struct [hostname], int [socket descriptor], long [port]);
@@ -57,7 +55,7 @@ Funcionamento:
 2. Configuramos as variáveis de conexão para serverAddr.
 3. O cliente tenta realizar uma conexão com o servidor, sendo que um retorno da função connect() < 0 significa que houve um erro ao tentar conectar.
 
-######setNonBlock
+#### setNonBlock()
 
 Definição:
 - void setNonBlock(int [file_descriptor]);
