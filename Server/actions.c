@@ -1,6 +1,6 @@
 #include "actions.h"
 
-int createFolder(char str[]){
+int make_folder(char str[]){
 	pid_t childpid;
 	childpid=fork();
 
@@ -9,7 +9,7 @@ int createFolder(char str[]){
 		return 1;
 	}
 	if(childpid == 0){   
-		if(listDir(str)){ 
+		if(list_dir(str)){ 
 			printf("Folder %s already exists!\n", str);
 		}else{
 			printf("Folder %s created!\n", str);
@@ -21,7 +21,7 @@ int createFolder(char str[]){
 	return EXIT_FAILURE;
 }
 
-int createFile (char str[]){
+int make_file (char str[]){
 	pid_t childpid;
 	childpid=fork();
 
@@ -30,7 +30,7 @@ int createFile (char str[]){
 		return 1;
 	}
 	if(childpid == 0){   
-		if(listDir(str)){ 
+		if(list_dir(str)){ 
 			printf("File %s already exists!\n", str);
 		}else{
 			printf("File %s created!\n", str);
@@ -43,7 +43,7 @@ int createFile (char str[]){
 }
 
 
-int listDir(char str[]){
+int list_dir(char str[]){
 	struct dirent **namelist;
 	int n;
 
@@ -71,7 +71,7 @@ int listDir(char str[]){
 	}
 }
 
-int deleteFolder(char str[]){
+int remove_folder(char str[]){
 	pid_t childpid;
 	childpid=fork();
 
@@ -80,7 +80,7 @@ int deleteFolder(char str[]){
 		return 1;
 	}
 	if(childpid == 0){   
-		if(listDir(str)){ 			
+		if(list_dir(str)){ 			
 			printf("Folder %s deleted!\n", str);
 			execl("/usr/bin/rm", "rm", "-rf", str, NULL);
 			perror("Child failed to exec");
@@ -95,7 +95,7 @@ int deleteFolder(char str[]){
 
 
 
-int deleteFile(char str[]){
+int remove_file(char str[]){
 	pid_t childpid;
 	childpid=fork();
 
@@ -104,7 +104,7 @@ int deleteFile(char str[]){
 		return 1;
 	}
 	if(childpid == 0){   
-		if(listDir(str)){ 
+		if(list_dir(str)){ 
 			printf("File %s deleted!\n", str);
 			execl("/usr/bin/rm", "rm", str, NULL);
 			perror("Child failed to exec");
@@ -117,6 +117,6 @@ int deleteFile(char str[]){
 	return EXIT_FAILURE;
 }
 
-int copy_file(char *sourcePath, char *destinationPath){
-	execl("/usr/bin/cp", "cp", &sourcePath, &destinationPath, NULL);
+int copy_file(char *source, char *destiny){
+	execl("/usr/bin/cp", "cp", &source, &destiny, NULL);
 }

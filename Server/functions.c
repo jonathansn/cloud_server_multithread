@@ -1,29 +1,74 @@
 #include "functions.h"
 
-void execFunction(char *buffer){
+void exeFunction(char *buffer){
+    		
+    if(buffer[0] == 2){
 
-    switch(buffer[0]){
-        case 1 :
-            //createFolder(&buffer[1]);
-                break;
-        case 2 :
-            //createFile(&buffer[1]);
-                break;
-        case 3 :
-            //copyFolder(&buffer[1], &buffer[50]);
-             break;
-        case 4 :
-            //copyFile(&buffer[1], &buffer[50]);
-                break;
-        case 5 :
-            //listDir(&buffer[1]);
-                break;
-        case 6 :
-            //deleteFolder(&buffer[1]);
-                break;
-        case 7 :
-            //deleteFile(&buffer[1]);
-                break;
-        default:    printf("This option does not exist!\n");
+        printf("[+] Buffer: %d %s\n",buffer[0] ,&buffer[1]);
+        printf("[+] Action: %d\n",buffer[0]);
+        printf("[+] Folder: %s\n",&buffer[1]);
+        
+        make_folder(&buffer[1]);
     }
+    if(buffer[0] == 3){
+
+        printf("[+] Buffer: %d %s\n",buffer[0] ,&buffer[1]);
+        printf("[+] Action: %d\n",buffer[0]);
+        printf("[+] File  : %s\n",&buffer[1]);
+        
+        make_file(&buffer[1]);
+    }
+
+    if(buffer[0] == 5){
+
+        printf("[+] Buffer: %d %s\n",buffer[0] ,&buffer[1]);
+        printf("[+] Action: %d\n",buffer[0]);
+        printf("[+] File  : %s\n",&buffer[1]);
+        
+        remove_folder(&buffer[1]);
+    }
+
+    if(buffer[0] == 6){
+
+        printf("[+] Buffer: %d %s\n",buffer[0] ,&buffer[1]);
+        printf("[+] Action: %d\n",buffer[0]);
+        printf("[+] File  : %s\n",&buffer[1]);
+        
+        remove_file(&buffer[1]);
+    }
+
+    if(buffer[0] == 9){
+
+        printf("[+] Buffer: %d %s\n",buffer[0] ,&buffer[1]);
+        printf("[+] Action: %d\n",buffer[0]);
+        printf("[+] File  : %s\n",&buffer[1]);
+        
+        list_dir(NULL);
+    }
+}
+
+//break buffer
+void bBuffer(char buffer[]){
+    int i, n, p = 0, k=0;
+    char *aux;
+    
+    n = strlen(buffer);
+    
+    printf("STRLEN %d\n", n);
+    printf("BUFFER %s\n", buffer);
+    //break hostname
+    for (i = 0; i < n-1; i++){
+        if(buffer[i] == ':'){
+            p = i+1;
+        } 
+    }
+
+    for(i = p; i < n; i++){
+        aux[k++] = buffer[i];
+        printf("%d teste if2 %c \n", i, aux[i]);    
+    }
+    
+
+    
+    printf("AUX %s\n", aux);    
 }
