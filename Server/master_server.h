@@ -16,7 +16,6 @@
 #include <pthread.h>
 
 #include "color.h"
-#include "functions.h"
 
 #define MAX_BUFFER 1024
 #define DEFAULT_PORT 8000

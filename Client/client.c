@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 
     if(argc != 4)
     {
-        fprintf(stderr, "./client [hostname] [host] [port]\n");
+        fprintf(stderr, "./client [hostname] [server_ip] [server_port]\n");
         exit(1);
     }
     hostname = argv[1];
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 void chatloop(char *hostname, int socketFd)
 {
     fd_set clientFds;
-    char chatMsg[MAX_BUFFER];
+    char fullMsg[MAX_BUFFER];
     char chatBuffer[MAX_BUFFER], msgBuffer[MAX_BUFFER];
 
     while(1)
@@ -76,8 +76,8 @@ void chatloop(char *hostname, int socketFd)
                             interruptHandler(-1); //Reuse the interruptHandler function to disconnect the client
                         else
                         {
-                            buildMessage(chatMsg, hostname, chatBuffer);
-                            if(write(socketFd, chatMsg, MAX_BUFFER - 1) == -1) perror("[" ANSI_COLOR_RED "error" ANSI_COLOR_RESET "] write failed: ");
+                            buildMessage(fullMsg, hostname, chatBuffer);
+                            if(write(socketFd, fullMsg, MAX_BUFFER - 1) == -1) perror("[" ANSI_COLOR_RED "error" ANSI_COLOR_RESET "] write failed: ");
                             memset(&chatBuffer, 0, sizeof(chatBuffer));
                         }
                     }
@@ -129,4 +129,8 @@ void interruptHandler(int sig_unused)
 
     close(socketFd);
     exit(1);
+}
+
+void strSplit(){
+
 }

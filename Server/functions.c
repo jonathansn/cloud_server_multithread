@@ -1,74 +1,66 @@
 #include "functions.h"
 
+
+
 void exeFunction(char *buffer){
-    		
-    if(buffer[0] == 2){
 
-        printf("[+] Buffer: %d %s\n",buffer[0] ,&buffer[1]);
-        printf("[+] Action: %d\n",buffer[0]);
-        printf("[+] Folder: %s\n",&buffer[1]);
-        
-        make_folder(&buffer[1]);
+    strSplit();
+
+    switch(buffer){
+
+        case "/createDir" :
+            printf(""); break;
+        default :
+            printf("enviar resposta pro cliente q o comando nao existe");
+
     }
-    if(buffer[0] == 3){
-
-        printf("[+] Buffer: %d %s\n",buffer[0] ,&buffer[1]);
-        printf("[+] Action: %d\n",buffer[0]);
-        printf("[+] File  : %s\n",&buffer[1]);
-        
-        make_file(&buffer[1]);
-    }
-
-    if(buffer[0] == 5){
-
-        printf("[+] Buffer: %d %s\n",buffer[0] ,&buffer[1]);
-        printf("[+] Action: %d\n",buffer[0]);
-        printf("[+] File  : %s\n",&buffer[1]);
-        
-        remove_folder(&buffer[1]);
-    }
-
-    if(buffer[0] == 6){
-
-        printf("[+] Buffer: %d %s\n",buffer[0] ,&buffer[1]);
-        printf("[+] Action: %d\n",buffer[0]);
-        printf("[+] File  : %s\n",&buffer[1]);
-        
-        remove_file(&buffer[1]);
-    }
-
-    if(buffer[0] == 9){
-
-        printf("[+] Buffer: %d %s\n",buffer[0] ,&buffer[1]);
-        printf("[+] Action: %d\n",buffer[0]);
-        printf("[+] File  : %s\n",&buffer[1]);
-        
-        list_dir(NULL);
-    }
+    
 }
 
-//break buffer
-void bBuffer(char buffer[]){
-    int i, n, p = 0, k=0;
-    char *aux;
-    
-    n = strlen(buffer);
-    
-    printf("STRLEN %d\n", n);
-    printf("BUFFER %s\n", buffer);
-    //break hostname
-    for (i = 0; i < n-1; i++){
-        if(buffer[i] == ':'){
-            p = i+1;
-        } 
+char** strSplit(char* a_str, const char a_delim)
+{
+    char** result    = 0;
+    size_t count     = 0;
+    char* tmp        = a_str;
+    char* last_comma = 0;
+    char delim[2];
+    delim[0] = a_delim;
+    delim[1] = 0;
+
+    /* Count how many elements will be extracted. */
+    while (*tmp)
+    {
+        if (a_delim == *tmp)
+        {
+            count++;
+            last_comma = tmp;
+        }
+        tmp++;
     }
 
-    for(i = p; i < n; i++){
-        aux[k++] = buffer[i];
-        printf("%d teste if2 %c \n", i, aux[i]);    
-    }
-    
+    /* Add space for trailing token. */
+    count += last_comma < (a_str + strlen(a_str) - 1);
 
-    
-    printf("AUX %s\n", aux);    
+    /* Add space for terminating null string so caller
+       knows where the list of returned strings ends. */
+    count++;
+
+    result = malloc(sizeof(char*) * count);
+
+    if (result)
+    {
+        size_t idx  = 0;
+        char* token = strtok(a_str, delim);
+
+        while (token)
+        {
+            assert(idx < count);
+            *(result + idx++) = strdup(token);
+            token = strtok(0, delim);
+        }
+        assert(idx == count - 1);
+        *(result + idx) = 0;
+    }
+
+    return result;
 }
