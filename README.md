@@ -22,12 +22,12 @@ O modo padrão para programas de socket é Blocking, porém utilizamos o metodo 
 ### MASTER_SERVER
 
     Command:
-    ```
+    ```c
     gcc -c master_server.c functions.c actions.c color.h && gcc master_server.c functions.c actions.c color.h -std=c99 -lpthread -Wall -o master_server && ./master_server [port]
     ```
 
     Example:
-    ```
+    ```c
     gcc -c master_server.c functions.c actions.c color.h && gcc master_server.c functions.c actions.c color.h -std=c99 -lpthread -Wall -o master_server && ./master_server 8000
     ```
 
