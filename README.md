@@ -22,14 +22,12 @@ O modo padrão para programas de socket é Blocking, porém utilizamos o metodo 
 ### MASTER_SERVER
 
     Command:
-    ```c
-    gcc -c master_server.c functions.c actions.c color.h && gcc master_server.c functions.c actions.c color.h -std=c99 -lpthread -Wall -o master_server && ./master_server [port]
-    ```
+
+    > gcc -c master_server.c functions.c actions.c color.h && gcc master_server.c functions.c actions.c color.h -std=c99 -lpthread -Wall -o master_server && ./master_server [port]
 
     Example:
-    ```c
-    gcc -c master_server.c functions.c actions.c color.h && gcc master_server.c functions.c actions.c color.h -std=c99 -lpthread -Wall -o master_server && ./master_server 8000
-    ```
+
+    > gcc -c master_server.c functions.c actions.c color.h && gcc master_server.c functions.c actions.c color.h -std=c99 -lpthread -Wall -o master_server && ./master_server 8000
 
 ### CLIENT
 
@@ -49,7 +47,7 @@ O modo padrão para programas de socket é Blocking, porém utilizamos o metodo 
 - void setNonBlock(int fd);
 - void interruptHandler(int sig);
 
-### setupAndConnect
+##### setupAndConnect
 
 Definição:
 - void setupAndConnect(struct [address serveraddr], struct [hostname], int [socket descriptor], long [port]);
@@ -59,7 +57,7 @@ Funcionamento:
 2. Configuramos as variáveis de conexão para serverAddr.
 3. O cliente tenta realizar uma conexão com o servidor, sendo que um retorno da função connect() < 0 significa que houve um erro ao tentar conectar.
 
-## setNonBlock
+######setNonBlock
 
 Definição:
 - void setNonBlock(int [file_descriptor]);
