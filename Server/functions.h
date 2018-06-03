@@ -5,6 +5,9 @@
 #include <string.h>
 #include "actions.h"
 
-void execFunction(char *buffer);
+
+void exeFunction(char buffer[]);
+char** bBuffer(char buffer[]);
+char* exe(char **buffer);
 
 #endif

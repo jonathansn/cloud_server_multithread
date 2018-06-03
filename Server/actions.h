@@ -14,7 +14,7 @@ int createFolder(char str[]);
 int createFile(char str[]);
 int copyFolder(char *sourcePath, char *destinationPath);
 int copyFile(char *sourcePath, char *destinationPath);
-int listDir(char str[]);
+int showDir(char str[]);
 int deleteFolder(char str[]);
 int deleteFile(char str[]);
 
