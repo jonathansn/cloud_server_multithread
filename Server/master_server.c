@@ -258,7 +258,10 @@ void *clientHandler(void *chv)
 
             //Obtain lock, push message to queue, unlock, set condition variable
             pthread_mutex_lock(q->mutex);
-            fprintf(stderr, "[" ANSI_COLOR_MAGENTA "queue" ANSI_COLOR_RESET "] Pushing message to queue\n> Message:%s>\n", msgBuffer);
+            fprintf(stderr, "[" ANSI_COLOR_MAGENTA "queue" ANSI_COLOR_RESET "] Pushing message to queue\n> Message:%s> ClientSocket:%d\n", msgBuffer, clientSocketFd);
+
+            myProtocol(msgBuffer, clientSocketFd);
+
             queuePush(q, msgBuffer);
             pthread_mutex_unlock(q->mutex);
             pthread_cond_signal(q->notEmpty);
@@ -268,7 +271,7 @@ void *clientHandler(void *chv)
 
 //The "consumer" -- waits for the queue to have messages then takes them out and broadcasts to clients
 void *messageHandler(void *data)
-{
+{   
     connDataVars *chatData = (connDataVars *)data;
     queue *q = chatData->queue;
     int *clientSockets = chatData->clientSockets;
@@ -288,11 +291,16 @@ void *messageHandler(void *data)
         //Broadcast message to all connected replicated servers
         fprintf(stderr, "[" ANSI_COLOR_GREEN "message" ANSI_COLOR_RESET "] Broadcast to replicated servers!\n> %s\n", msg);
 
-        for(int i = 0; i < chatData->numClients; i++)
-        {
-            int socket = clientSockets[i];
-            if(socket != 0 && write(socket, msg, MAX_BUFFER - 1) == -1)
-                perror("[" ANSI_COLOR_RED "error" ANSI_COLOR_RESET "] Socket write failed: ");
-        }
+        //for(int i = 0; i < chatData->numClients; i++)
+        //{
+        //    int socket = clientSockets[0];
+        //   if(socket != 0 && write(socket, msg, MAX_BUFFER - 1) == -1)
+        //        perror("[" ANSI_COLOR_RED "error" ANSI_COLOR_RESET "] Socket write failed: ");
+        //}
     }
+}
+
+void myProtocol(char *msgBuffer, int clientSocketFd){
+    char teste = (char) clientSocketFd;
+    fprintf("teste: %c", teste);
 }

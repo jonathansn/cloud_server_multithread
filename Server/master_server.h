@@ -72,4 +72,6 @@ queue* queueInit(void);
 void queuePush(queue *q, char* msg);
 char* queuePop(queue *q);
 
+void myProtocol(char* msg, int clientSocketFd);
+
 #endif
