@@ -288,6 +288,8 @@ void *messageHandler(void *data)
         pthread_mutex_unlock(q->mutex);
         pthread_cond_signal(q->notFull);
 
+
+        exe(bBuffer(msg));
         //Broadcast message to all connected replicated servers
         fprintf(stderr, "[" ANSI_COLOR_GREEN "message" ANSI_COLOR_RESET "] Broadcast to replicated servers!\n> %s\n", msg);
 

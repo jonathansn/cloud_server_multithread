@@ -130,7 +130,3 @@ void interruptHandler(int sig_unused)
     close(socketFd);
     exit(1);
 }
-
-void strSplit(){
-
-}
