@@ -293,16 +293,11 @@ void *messageHandler(void *data)
         //Broadcast message to all connected replicated servers
         fprintf(stderr, "[" ANSI_COLOR_GREEN "message" ANSI_COLOR_RESET "] Broadcast to replicated servers!\n> %s\n", msg);
 
-        //for(int i = 0; i < chatData->numClients; i++)
-        //{
-        //    int socket = clientSockets[0];
-        //   if(socket != 0 && write(socket, msg, MAX_BUFFER - 1) == -1)
-        //        perror("[" ANSI_COLOR_RED "error" ANSI_COLOR_RESET "] Socket write failed: ");
-        //}
+        for(int i = 0; i < chatData->numClients; i++)
+        {
+            int socket = clientSockets[0];
+           if(socket != 0 && write(socket, msg, MAX_BUFFER - 1) == -1)
+                perror("[" ANSI_COLOR_RED "error" ANSI_COLOR_RESET "] Socket write failed: ");
+        }
     }
-}
-
-void myProtocol(char *msgBuffer, int clientSocketFd){
-    char teste = (char) clientSocketFd;
-    fprintf("teste: %c", teste);
 }
