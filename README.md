@@ -58,6 +58,22 @@ O modo padrão para programas de socket é Blocking, porém utilizamos o metodo 
 2. Configuramos as variáveis de conexão para serverAddr.
 3. O cliente tenta realizar uma conexão com o servidor, sendo que um retorno da função connect() < 0 significa que houve um erro ao tentar conectar.
 
+### chatLoop()
+
+**Declaração:**
+- void chatloop(char *hostname, int socketFd);
+
+**Definição:**
+- Utilizamos para receber a entrada do cliente e mostrar a saída.
+
+**Funcionamento:**
+1. Instanciamos um struct que recebe um fd (clientFds) válido, e três arrays do tipo char para o buffer.
+2. O array fullMsg contém todas as informações geradas pela função buildMessage.
+3. O array chatBuffer recebe a entrada do cliente, já o msgBuffer é para receber a resposta do servidor.
+4. Iniciamos o loop e redefinimos o conjunto de fd cada vez que select () o modifica.
+5. Esperamos por um fd válido utilizando a função select() != -1
+6. 
+
 ### setNonBlock()
 
 **Declaração:**
@@ -74,8 +90,18 @@ O modo padrão para programas de socket é Blocking, porém utilizamos o metodo 
 
 ### interruptHandler()
 
-**Definição:**
+**Declaração:**
 - void interruptHandler(int sig_unused)
+
+**Definição:**
+- Utilizado para notificar o servidor quando o cliente executa o comando /exit
+
+**Funcionamento:**
+1. No bloco de execução da função chatLoop, é identificado o comando /exit
+2. A função interruptHandler é chamada com o parâmetro -1
+3. Utilizamos a função close() passando o file_descriptor do socket do cliente
+4. A função exit(1) termina o programa
+
 
 
 

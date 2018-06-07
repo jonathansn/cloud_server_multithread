@@ -60,7 +60,6 @@ typedef struct {
 } clientHandlerVars;
 
 void startConn(int socketFd);
-void buildMessage(char *result, char *name, char *msg);
 void bindSocket(struct sockaddr_in *serverAddr, int socketFd, long port);
 void removeClient(connDataVars *data, int clientSocketFd);
 
@@ -73,6 +72,7 @@ queue* queueInit(void);
 void queuePush(queue *q, char* msg);
 char* queuePop(queue *q);
 
-void myProtocol(char* msg, int clientSocketFd);
+void buildMessage(char *fullMsg, char *msgBuffer, int clientSocketFd);
+void splitBuffer(char *fullMsg);
 
 #endif

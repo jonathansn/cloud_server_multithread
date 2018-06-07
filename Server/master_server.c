@@ -236,6 +236,8 @@ void *clientHandler(void *chv)
     int clientSocketFd = vars->clientSocketFd;
 
     char msgBuffer[MAX_BUFFER];
+    char fullMsg[MAX_BUFFER];
+
     while(1)
     {
         int numBytesRead = read(clientSocketFd, msgBuffer, MAX_BUFFER - 1);
@@ -258,11 +260,11 @@ void *clientHandler(void *chv)
 
             //Obtain lock, push message to queue, unlock, set condition variable
             pthread_mutex_lock(q->mutex);
-            fprintf(stderr, "[" ANSI_COLOR_MAGENTA "queue" ANSI_COLOR_RESET "] Pushing message to queue\n> Message:%s> ClientSocket:%d\n", msgBuffer, clientSocketFd);
+            fprintf(stderr, "\n[" ANSI_COLOR_MAGENTA "queue" ANSI_COLOR_RESET "] Pushing message to queue\nMessage:%sSocket:%d\n", msgBuffer, clientSocketFd);
 
-            myProtocol(msgBuffer, clientSocketFd);
+            buildMessage(fullMsg, msgBuffer, clientSocketFd);
 
-            queuePush(q, msgBuffer);
+            queuePush(q, fullMsg);
             pthread_mutex_unlock(q->mutex);
             pthread_cond_signal(q->notEmpty);
         }
@@ -284,20 +286,64 @@ void *messageHandler(void *data)
         {
             pthread_cond_wait(q->notEmpty, q->mutex);
         }
-        char* msg = queuePop(q);
+        char* fullMsg = queuePop(q);
         pthread_mutex_unlock(q->mutex);
         pthread_cond_signal(q->notFull);
 
+        //Prepare messsage to send client
+        fprintf(stderr, "[" ANSI_COLOR_YELLOW "wait" ANSI_COLOR_RESET "] Prepare message!\n");
 
-        exe(bBuffer(msg));
-        //Broadcast message to all connected replicated servers
-        fprintf(stderr, "[" ANSI_COLOR_GREEN "message" ANSI_COLOR_RESET "] Broadcast to replicated servers!\n> %s\n", msg);
+        //for(int i = 0; i < chatData->numClients; i++)
+        //{
+            fprintf(stderr, "[" ANSI_COLOR_BLUE "split" ANSI_COLOR_RESET "] Split message!\n");
+            splitBuffer(fullMsg);
 
-        for(int i = 0; i < chatData->numClients; i++)
-        {
+            fprintf(stderr, "[" ANSI_COLOR_YELLOW "fullmsg" ANSI_COLOR_RESET "] %s\n", fullMsg);
+            
+            fprintf(stderr, "[" ANSI_COLOR_GREEN "send" ANSI_COLOR_RESET "] Send message!\n");
             int socket = clientSockets[0];
-           if(socket != 0 && write(socket, msg, MAX_BUFFER - 1) == -1)
+            if(socket != 0 && write(socket, fullMsg, MAX_BUFFER - 1) == -1)
                 perror("[" ANSI_COLOR_RED "error" ANSI_COLOR_RESET "] Socket write failed: ");
-        }
+        //}
     }
+}
+
+void buildMessage(char *fullMsg, char *msgBuffer, int clientSocketFd){
+
+    memset(fullMsg, 0, MAX_BUFFER);
+    sprintf(fullMsg, "%d", clientSocketFd);
+    strcat(fullMsg, ":");
+    strcat(fullMsg, msgBuffer);
+
+}
+
+void splitBuffer(char *fullMsg){
+
+    char *socket, *hostname, *msg;
+    
+    // Returns first token 
+    char *token = strtok(fullMsg, ":");
+    int i = 0;   
+
+    while (token != NULL)
+    {
+        if(i == 0){
+            socket = token;
+            printf("Socket: %s\n", token);
+            token = strtok(NULL, ":");
+        }
+        if(i == 1){
+            hostname = token;
+            printf("Hostname: %s\n", token);
+            token = strtok(NULL, ":");
+        }
+        if(i == 2){
+            msg = token;
+            printf("Message: %s", token);
+            token = strtok(NULL, ":");
+        }
+
+        i++;
+    }
+
 }
