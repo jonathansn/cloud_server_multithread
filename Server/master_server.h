@@ -14,6 +14,8 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <pthread.h>
+#include <string.h>
+#include <stddef.h>
 
 #include "color.h"
 #include "functions.h"
@@ -73,6 +75,6 @@ void queuePush(queue *q, char* msg);
 char* queuePop(queue *q);
 
 void buildMessage(char *fullMsg, char *msgBuffer, int clientSocketFd);
-void splitBuffer(char *fullMsg);
+int splitBuffer(char *fullMsg);
 
 #endif

@@ -260,7 +260,7 @@ void *clientHandler(void *chv)
 
             //Obtain lock, push message to queue, unlock, set condition variable
             pthread_mutex_lock(q->mutex);
-            fprintf(stderr, "\n[" ANSI_COLOR_MAGENTA "queue" ANSI_COLOR_RESET "] Pushing message to queue\nMessage:%sSocket:%d\n", msgBuffer, clientSocketFd);
+            fprintf(stderr, "\n[" ANSI_COLOR_MAGENTA "queue" ANSI_COLOR_RESET "] Pushing message to queue - socket %d\n", clientSocketFd);
 
             buildMessage(fullMsg, msgBuffer, clientSocketFd);
 
@@ -295,13 +295,14 @@ void *messageHandler(void *data)
 
         //for(int i = 0; i < chatData->numClients; i++)
         //{
-            fprintf(stderr, "[" ANSI_COLOR_BLUE "split" ANSI_COLOR_RESET "] Split message!\n");
-            splitBuffer(fullMsg);
+            fprintf(stderr, "[" ANSI_COLOR_BLUE "split" ANSI_COLOR_RESET "] Split message!\n");            
 
             fprintf(stderr, "[" ANSI_COLOR_YELLOW "fullmsg" ANSI_COLOR_RESET "] %s\n", fullMsg);
             
+            int socket = splitBuffer(fullMsg);
+
             fprintf(stderr, "[" ANSI_COLOR_GREEN "send" ANSI_COLOR_RESET "] Send message!\n");
-            int socket = clientSockets[0];
+            
             if(socket != 0 && write(socket, fullMsg, MAX_BUFFER - 1) == -1)
                 perror("[" ANSI_COLOR_RED "error" ANSI_COLOR_RESET "] Socket write failed: ");
         //}
@@ -317,33 +318,27 @@ void buildMessage(char *fullMsg, char *msgBuffer, int clientSocketFd){
 
 }
 
-void splitBuffer(char *fullMsg){
+int splitBuffer(char *fullMsg){
 
     char *socket, *hostname, *msg;
+    char delimiters[] = ":";    
+    char *token, *splitMsg;
+    int bufferSize = strlen(fullMsg);
+    int i = 0, clientFd;
+
+    memcpy(splitMsg, fullMsg, 20);
     
-    // Returns first token 
-    char *token = strtok(fullMsg, ":");
-    int i = 0;   
+    token = strsep(&splitMsg, delimiters);
+    printf("socket: %s\n", token);
 
-    while (token != NULL)
-    {
-        if(i == 0){
-            socket = token;
-            printf("Socket: %s\n", token);
-            token = strtok(NULL, ":");
-        }
-        if(i == 1){
-            hostname = token;
-            printf("Hostname: %s\n", token);
-            token = strtok(NULL, ":");
-        }
-        if(i == 2){
-            msg = token;
-            printf("Message: %s", token);
-            token = strtok(NULL, ":");
-        }
+    clientFd = atoi(token);
+       
+    token = strsep(&splitMsg, delimiters);
+    printf("Hostname: %s\n", token);
+       
+    token = strsep(&splitMsg, delimiters);
+    printf("Message: %s\n", token);
 
-        i++;
-    }
+    return clientFd;
 
 }
