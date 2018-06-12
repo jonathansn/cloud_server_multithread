@@ -315,18 +315,16 @@ void buildMessage(char *fullMsg, char *msgBuffer, int clientSocketFd){
     sprintf(fullMsg, "%d", clientSocketFd);
     strcat(fullMsg, ":");
     strcat(fullMsg, msgBuffer);
-
 }
 
 int splitBuffer(char *fullMsg){
 
-    char *socket, *hostname, *msg;
+    char **msg;
     char delimiters[] = ":";    
     char *token, *splitMsg;
-    int bufferSize = strlen(fullMsg);
-    int i = 0, clientFd;
+    int clientFd;
 
-    memcpy(splitMsg, fullMsg, 20);
+    memcpy(splitMsg, fullMsg, MAX_BUFFER);
     
     token = strsep(&splitMsg, delimiters);
     printf("socket: %s\n", token);
@@ -335,10 +333,56 @@ int splitBuffer(char *fullMsg){
        
     token = strsep(&splitMsg, delimiters);
     printf("Hostname: %s\n", token);
-       
+    
     token = strsep(&splitMsg, delimiters);
     printf("Message: %s\n", token);
 
+    memcpy(msg, &token,  sizeof(token));
+
+    action(msg[0]);
+    
     return clientFd;
+}
+
+command *splitMsg(char *msg){
+    char *token;
+    char delimiters[] = " ";
+    command *c = (command*)malloc(sizeof(command));
+    
+    token = strsep(&msg, delimiters);
+    c->com = malloc(sizeof(char) * (strlen(token) + 1));
+    strcpy(c->com, token);
+    
+    token = strsep(&msg, delimiters);
+    c->msg = malloc(sizeof(char) * (strlen(token) + 1));
+    strcpy(c->msg, token);
+    
+    return c;
+}
+
+void action(char *msg){
+    char *name, *resp;
+    int i = strlen(msg);
+    strtok(msg, "\n");
+    command *c;
+
+    if(!strcmp(msg, "ls")){
+        printf("LS CHE\n");
+        return;
+    }  
+    
+    c = splitMsg(msg);
+
+    if(!strcmp(c->com, "mkdir")){
+        printf("mdir\n");
+        //resp = createFolder(name);
+        //printf("RESP mdir %s \n", resp);
+    }
+    else if(strstr(msg, "ls")){
+        printf("LS\n");
+    }
+
+
+    free(c);
 
 }

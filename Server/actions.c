@@ -1,24 +1,31 @@
 #include "actions.h"
 
-int createFolder(char str[]){
+char *createFolder(char str[]){
+	char *ret;
 	pid_t childpid;
 	childpid=fork();
 
+	strcat(ret, "Folder ");
+	strcat(ret, str);
+
 	if(childpid == -1){
 		perror("Fork failed");
-		return 1;
 	}
 	if(childpid == 0){   
 		if(showDir(str)){ 
 			printf("Folder %s already exists!\n", str);
+			strcat(ret," already exists!");
+			return ret;
 		}else{
 			printf("Folder %s created!\n", str);
+			strcat(ret," created!");
 			execl("/bin/mkdir", "mkdir", str, NULL);
 			perror("Child failed to exec");
-			return 1;
 		}
 	}
-	return EXIT_FAILURE;
+
+	//printf("TESTE antes do return\n");
+	return ret;
 }
 
 int createFile (char str[]){

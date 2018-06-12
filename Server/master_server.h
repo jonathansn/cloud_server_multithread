@@ -19,7 +19,7 @@
 
 #include "color.h"
 #include "functions.h"
-
+#include "actions.h"
 #define MAX_BUFFER 1024
 #define DEFAULT_PORT 8000
 
@@ -61,6 +61,13 @@ typedef struct {
     int clientSocketFd;
 } clientHandlerVars;
 
+struct command {
+    char *com;
+    char *msg;
+};
+
+typedef struct command command;
+
 void startConn(int socketFd);
 void bindSocket(struct sockaddr_in *serverAddr, int socketFd, long port);
 void removeClient(connDataVars *data, int clientSocketFd);
@@ -76,5 +83,5 @@ char* queuePop(queue *q);
 
 void buildMessage(char *fullMsg, char *msgBuffer, int clientSocketFd);
 int splitBuffer(char *fullMsg);
-
+void action(char *msg);
 #endif
