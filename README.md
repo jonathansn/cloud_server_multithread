@@ -240,6 +240,24 @@ O modo padrão para programas de socket é Blocking, porém utilizamos o metodo 
 7. Se a thread for criada incrementamos (chatData->numClients) o número de clientes, senão fechamos o socked utilizando close().
 8. Por fim liberamos o mutex da lista de clientes com pthread_mutex_unlock().
 
-chatBuffer[] = mensagem que o cliente digitou
-msgBuffer[] = recebe uma mensagem do servidor
-fullMsg[] = buffer contendo todas as informações
+### clientHandler()
+
+**Declaração:**
+- void *clientHandler(void *chv);
+
+**Definição:**
+- O "produtor" - ouve as mensagens do cliente para adicionar à fila de mensagens.
+
+**Funcionamento:**
+1. Definimos as variáveis de buffer msgBuffer e fullMsg.
+2. msgBuffer[] é o buffer no qual conteúdo é uma mensagem recebida do servidor.
+3. fullMsg[] é o buffer no qual contem todas as informações [clientSocketFd:hostname:message].
+4. Criamos um loop infinito para a função.
+5. Se o cliente digitar /exit removemos ele da lista de clientes e fechamos o socket.
+6. Senão aguardamos a fila não estar cheia antes de enviar mensagem, e comparamos com pthread_cond_wait() para verificar a situação do mutex aplicado à fila.
+7. Obtemos o bloqueio da fila com pthread_mutex_lock().
+8. Construimos o buffer fullMsg chamando buildMessage(fullMsg, msgBuffer, clientSocketFd).
+9. Enviamos a mensagem para a fila chamando queuePush(q, fullMsg).
+10. Desbloqueamos a fila utilizando pthread_mutex_unlock(), e definimos a variável de condição com pthread_cond_signal(q->notEmpty).
+11. Essa função é usadas para desbloquear encadeamentos bloqueados em uma variável de condição.
+
