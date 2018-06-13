@@ -139,6 +139,32 @@ O modo padrão para programas de socket é Blocking, porém utilizamos o metodo 
 11. Utilizando pthread_mutex_destroy(data.clientListMutex) destruimos o objeto mutex.
 12. Após destruirmos o mutex, desalocamos o espaço de memória utilizado pela função destruída.
 
+### queueInit()
+
+**Declaração:**
+- queue* queueInit(void);
+
+**Definição:**
+- Esta função inicia e aloca espaço para a fila de mensagens.
+
+**Funcionamento:**
+1. Alocamos espaço na memória com malloc().
+2. Inicializamos as variáveis da struct.
+3. Alocamos espaço na memória com malloc() para q->mutex, q->notFull e q->notEmpty, Logo, iniciamos as variáveis de condição utilizando pthread_cond_init().
+4. Retornamos o ponteiro da fila que é utilizado por startConn, pela variável data.queue.
+
+### queueDestroy()
+
+**Declaração:**
+- void queueDestroy(queue *q);
+
+**Definição:**
+- Esta função limpa a fila.
+
+**Funcionamento:**
+1. Utilizamos pthread_mutex_destroy() em q->mutex, q->notFull e q->notEmpty para limpar o conteúdo da fila.
+2. Ainda utilizamos free() para desalocar espaço na memória para q->mutex, q->notFull e q->notEmpty, inclusive para a fila representada pelo ponteiro *q.
+
 chatBuffer[] = mensagem que o cliente digitou
 msgBuffer[] = recebe uma mensagem do servidor
 fullMsg[] = buffer contendo todas as informações
