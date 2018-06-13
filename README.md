@@ -127,10 +127,17 @@ O modo padrão para programas de socket é Blocking, porém utilizamos o metodo 
 
 **Funcionamento:**
 1. Definimos as variáveis de conexão.
-2. Para data.clientListMutex, alocamos um espaço da memória com malloc() e definimos o tipo pthread_mutex_t.
-3. Logo, iniciamos o mutex com pthread_mutex_init(data.clientListMutex, NULL), o valor NULL utilizado significa que utilizaremos os atributos padrão do mutex conforme descrito na documentação. [Doc] (http://pubs.opengroup.org/onlinepubs/7908799/xsh/pthread_mutex_init.html)
-4. 
-
+2. data.queue recebe o ptr da função queueInit() na qual tem por função iniciar a fila e alocar espaço para ela.
+3. Para data.clientListMutex, alocamos um espaço da memória com malloc() e definimos o tipo pthread_mutex_t.
+4. Logo, iniciamos o mutex com pthread_mutex_init(data.clientListMutex, NULL), o valor NULL utilizado significa que utilizaremos os atributos padrão do mutex.
+5. Criamos uma thread para controlar a conexão do cliente e passamos data* como parâmetro que contém as informações da conexão.
+3. Com FD_ZERO() definimos '0' nos bits do file_descriptor.
+7. Com FD_SET() definimos o file_descriptor.
+8. Criamos uma thread para controlar a troca de mensagens entre os hosts.
+9. Com pthread_join aguardamos até a thread de destino seja encerrada.
+10. Limpamos a fila com queueDestroy().
+11. Utilizando pthread_mutex_destroy(data.clientListMutex) destruimos o objeto mutex.
+12. Após destruirmos o mutex, desalocamos o espaço de memória utilizado pela função destruída.
 
 chatBuffer[] = mensagem que o cliente digitou
 msgBuffer[] = recebe uma mensagem do servidor
