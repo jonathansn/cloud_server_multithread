@@ -333,16 +333,18 @@ int splitBuffer(char *fullMsg){
        
     token = strsep(&splitMsg, delimiters);
     printf("Hostname: %s\n", token);
-    
+
     token = strsep(&splitMsg, delimiters);
     printf("Message: %s\n", token);
-
-    memcpy(msg, &token,  sizeof(token));
-
-    action(msg[0]);
     
+    if (strlen(token) > 1){
+        memcpy(msg, &token,  sizeof(token));
+        exeAction(msg[0]);
+    }
+
     return clientFd;
 }
+
 
 command *splitMsg(char *msg){
     char *token;
@@ -352,37 +354,51 @@ command *splitMsg(char *msg){
     token = strsep(&msg, delimiters);
     c->com = malloc(sizeof(char) * (strlen(token) + 1));
     strcpy(c->com, token);
-    
+
     token = strsep(&msg, delimiters);
-    c->msg = malloc(sizeof(char) * (strlen(token) + 1));
-    strcpy(c->msg, token);
-    
+    if (token != NULL){
+        c->msg = malloc(sizeof(char) * (strlen(token) + 1));
+        strcpy(c->msg, token);
+    }else{
+        c->msg = NULL;
+    }
     return c;
 }
 
-void action(char *msg){
-    char *name, *resp;
-    int i = strlen(msg);
+void exeAction(char *msg){
+    char *name;
+    int resp;
     strtok(msg, "\n");
+
     command *c;
 
     if(!strcmp(msg, "ls")){
-        printf("LS CHE\n");
+        showDir(NULL);
         return;
-    }  
-    
+    }
+
     c = splitMsg(msg);
+    if(c->msg != NULL){
+        if(!strcmp(c->com, "mkdir")){    
+            resp = createFolder(c->msg);
+        }       
+        if(!strcmp(c->com, "mkfile")){    
+            resp = createFile(c->msg);
+        }      
+        if(!strcmp(c->com, "rmfolder")){    
+            resp = deleteFolder(c->msg);
+        }
+        if(!strcmp(c->com, "rmfile")){    
+            resp = deleteFile(c->msg);
+        }
+        if(!strcmp(c->com, "cpfile")){    
+            //resp = copyFile(c->msg);
+        }         
 
-    if(!strcmp(c->com, "mkdir")){
-        printf("mdir\n");
-        //resp = createFolder(name);
-        //printf("RESP mdir %s \n", resp);
+    }else{
+        free(c);
+        return;
     }
-    else if(strstr(msg, "ls")){
-        printf("LS\n");
-    }
-
-
     free(c);
-
 }
+
