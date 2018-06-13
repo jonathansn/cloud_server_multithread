@@ -18,7 +18,6 @@
 #include <stddef.h>
 
 #include "color.h"
-#include "functions.h"
 #include "actions.h"
 
 #define MAX_BUFFER 1024
