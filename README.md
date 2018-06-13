@@ -102,7 +102,34 @@ O modo padrão para programas de socket é Blocking, porém utilizamos o metodo 
 3. Utilizamos a função close() passando o file_descriptor do socket do cliente
 4. A função exit(1) termina o programa
 
+## Server
 
+- void startConn(int socketFd);
+- void bindSocket(struct sockaddr_in *serverAddr, int socketFd, long port);
+- void removeClient(connDataVars *data, int clientSocketFd);
+- void *newClientHandler(void *data);
+- void *clientHandler(void *chv);
+- void *messageHandler(void *data);
+- void queueDestroy(queue *q);
+- queue* queueInit(void);
+- void queuePush(queue *q, char* msg);
+- char* queuePop(queue *q);
+- void buildMessage(char *fullMsg, char *msgBuffer, int clientSocketFd);
+- int splitBuffer(char *fullMsg);
+
+### startConn()
+
+**Declaração:**
+- void startConn(int socketFd);
+
+**Definição:**
+- Quando o cliente solicita uma conexão, esta função à configura e cria uma threads para controlar a conexão e outra para a troca de menssagens.
+
+**Funcionamento:**
+1. Definimos as variáveis de conexão.
+2. Para data.clientListMutex, alocamos um espaço da memória com malloc() e definimos o tipo pthread_mutex_t.
+3. Logo, iniciamos o mutex com pthread_mutex_init(data.clientListMutex, NULL), o valor NULL utilizado significa que utilizaremos os atributos padrão do mutex conforme descrito na documentação. [Doc] (http://pubs.opengroup.org/onlinepubs/7908799/xsh/pthread_mutex_init.html)
+4. 
 
 
 chatBuffer[] = mensagem que o cliente digitou
