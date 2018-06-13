@@ -261,3 +261,22 @@ O modo padrão para programas de socket é Blocking, porém utilizamos o metodo 
 10. Desbloqueamos a fila utilizando pthread_mutex_unlock(), e definimos a variável de condição com pthread_cond_signal(q->notEmpty).
 11. Essa função é usadas para desbloquear encadeamentos bloqueados em uma variável de condição.
 
+### messageHandler()
+
+**Declaração:**
+- void *messageHandler(void *data);
+
+**Definição:**
+- O "consumidor" - espera que a fila tenha mensagens, então as retira e transmite para os clientes.
+
+**Funcionamento:**
+1. Definimos as variáveis para manipular.
+2. Iniciamos um loop infinito para a função.
+3. Obtemos o bloqueio da utilizando filapthread_mutex_lock().
+4. Aguardamos ela não estar vazia utilizando pthread_cond_wait(q->notEmpty, q->mutex).
+5. Chamamos queuePop(q) para retirar a mensagem da fila.
+6. Desbloqueamos a fila utilizando pthread_mutex_unlock().
+7. Definimos a variável de condição utilizando pthread_cond_signal(q->notFull).
+8. Essa função é usadas para desbloquear encadeamentos bloqueados em uma variável de condição.
+9. Preparamos a mensagem para enviar para o cliente utilizando a função splitBuffer(fullMsg), no qual separa as informações contidas no buffer utilizando delimitadores com a função strsep().
+10. Após isso enviamos a mensagem chamando a função write().
