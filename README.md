@@ -4,16 +4,16 @@
 O servidor consistirá em n threads para realizar o controle das conexões, mensagens e chamadas de funções executadas no servidor. Um conjunto de n encadeamentos estará sempre pronto para executar/atender solicitações de entrada.
 
 #### QUEUING
-O encadeamento das filas estará escutando continuamente a porta "p" para solicitações de entrada. Assim que uma nova solicitação chegar ao servidor master_server, ela será inserida na fila pronta.
+O encadeamento das filas estará escutando continuamente a porta "p" para solicitações de entrada. Assim que uma nova solicitação chegar ao servidor master_server, ela será inserida na fila.
 
 #### SCHEDULING
-A política de agendamento a ser usada é definida através da opção [–s sched] quando o servidor master_slave for iniciado pela primeira vez. As políticas disponíveis são First Come First Serve (FCFS) e Shortest Job First (SJF).
+As políticas disponíveis são First Come First Serve (FCFS) e Shortest Job First (SJF).
 
 #### SYCHNRONIZATION
-Para garantir que protegemos a fila pronta e outras estruturas de dados compartilhadas em vários encadeamentos para evitar condições de corrida. Os bloqueios de mutex foram implementados para o mesmo.
+Para garantir e proteger a fila e outras estruturas de dados compartilhadas em vários encadeamentos para evitar condições de corrida, implementamos bloqueios por mutex.
 
 #### NOBLOCKING
-O modo padrão para programas de socket é Blocking, porém utilizamos o metodo Nonblocking. Isso significa que para chamadas FCNTL () ou IOCTL (), o programa de chamada continuará, mesmo que a chamada de E/S possa não ter sido concluída. Se a chamada de E/S não puder ser concluída, ela retornará com ERRNO EWOULDBLOCK. Para testarmos a conclusão de qualquer chamada de soquete, utlizamos a função SELECT() que retorna EWOULDBLOCK.
+O modo padrão para programas de socket é Blocking, porém utilizamos o metodo Nonblocking. Isso significa que para chamadas FCNTL() ou IOCTL(), o programa de chamada continuará, mesmo que a chamada de E/S possa não ter sido concluída. Se a chamada de E/S não puder ser concluída, ela retornará com ERRNO EWOULDBLOCK. Para testarmos a conclusão de qualquer chamada de soquete, utlizamos a função SELECT() que retorna EWOULDBLOCK.
 
 ## COMPILE AND RUN
 
@@ -194,6 +194,51 @@ O modo padrão para programas de socket é Blocking, porém utilizamos o metodo 
 3. Verificamos se q->head == MAX_BUFFER, isso significa que a fila já foi toda percorrida, então q->head recebe 0 e volta para o início da fila.
 4. Verificamos se q->head == q->head, se for significa que a fila está vazia, então q->empty recebe valor 0.
 5. q->full recebe o valor 0, que significa que algo foi retirado da fila e ela não está mais cheia.
+
+### bindSocket()
+
+**Declaração:**
+- void bindSocket(struct sockaddr_in *serverAddr, int socketFd, long port);
+
+**Definição:**
+- Associamos o socket do servidor com seu endereço local para que o servidor se 'ligue', para que os clientes possam usar esse endereço para se conectar ao servidor.
+
+**Funcionamento:**
+1. Utilizando memset zeramos o endereço de serverAddr.
+2. Configuramos AF_INET para podermos realizar conexões pela internet.
+3. A porta padrão do servidor está definida para 8000, mas ao inicializarmos o servidor podemos passar por parâmetro outra porta.
+
+### removeClient()
+
+**Declaração:**
+- void removeClient(connDataVars *data, int clientSocketFd);
+
+**Definição:**
+- Remove o soquete da lista de soquetes ativos do cliente e o fecha.
+
+**Funcionamento:**
+1. Utilizando pthread_mutex_lock(data->clientListMutex) na lista de clientes para manipularmos esta fila.
+2. Percorremos a lista para achar o socket do cliente que será encerrado.
+3. Utilizamos a função close() para fechar a conexão.
+4. Decrementamos data->numClients, que representa o número de clientes conectados.
+
+### newClientHandler()
+
+**Declaração:**
+- void *newClientHandler(void *data);
+
+**Definição:**
+- Thread para lidar com novas conexões. Adiciona o fd do cliente à lista de fds de clientes e gera uma nova thread clientHandler para ele.
+
+**Funcionamento:**
+1. Criamos um loop infinito para esta função utilizando while(1).
+2. clientSocketFd recebe o retorno do fd do cliente da função accept() que é utilizada para criar um socket para o cliente que solicita um connect().
+3. Bloqueamos a lista de clientes para adicionar um novo cliente, e adiciona este cliente a lista se o número máximo de clientes não for excedido.
+4. Utilizando FD_ISSET negado, esperamos que ele retorne 1 se não haver nenhum file_descriptor definido no conjunto de file_descriptor apontado por fd_set conforme função FD_ISSET(fd , &fdset).
+5. Incluimos clientSocketFd ao conjunto de file_descriptor apontado por &(chatData->serverReadFds).
+6. Criamos uma nova thread para lidar com as mensagens do cliente, definida na função clientHandler().
+7. Se a thread for criada incrementamos (chatData->numClients) o número de clientes, senão fechamos o socked utilizando close().
+8. Por fim liberamos o mutex da lista de clientes com pthread_mutex_unlock().
 
 chatBuffer[] = mensagem que o cliente digitou
 msgBuffer[] = recebe uma mensagem do servidor
