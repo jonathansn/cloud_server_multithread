@@ -165,6 +165,36 @@ O modo padrão para programas de socket é Blocking, porém utilizamos o metodo 
 1. Utilizamos pthread_mutex_destroy() em q->mutex, q->notFull e q->notEmpty para limpar o conteúdo da fila.
 2. Ainda utilizamos free() para desalocar espaço na memória para q->mutex, q->notFull e q->notEmpty, inclusive para a fila representada pelo ponteiro *q.
 
+### queuePush()
+
+**Declaração:**
+- void queuePush(queue *q, char* msg);
+
+**Definição:**
+- Empurra a mensagem para o final da fila.
+
+**Funcionamento:**
+1. Com q->buffer[q->tail], acessamos o final da fila e empurramos a menssagem para este espaço.
+2. q->tail que é a variável que representa o valor do final da fila é incrementada.
+3. Verificamos se q->tail == MAX_BUFFER, isso significa que o espaço alocado para a fila é igual ao buffer e a fila está cheia.
+4. Verificamos se q->tail == q->head, se for significa que a fila está cheia.
+5. q->empty recebe o valor 0, que significa que algo foi alocado na fila.
+
+### queuePop()
+
+**Declaração:**
+- char* queuePop(queue *q);
+
+**Definição:**
+- Tiramos a mensagem do topo da fila.
+
+**Funcionamento:**
+1. Com q->buffer[q->tail], acessamos o final da fila e empurramos a menssagem para este espaço.
+2. q->head que é a variável que representa o valor do final da fila é incrementada.
+3. Verificamos se q->head == MAX_BUFFER, isso significa que a fila já foi toda percorrida, então q->head recebe 0 e volta para o início da fila.
+4. Verificamos se q->head == q->head, se for significa que a fila está vazia, então q->empty recebe valor 0.
+5. q->full recebe o valor 0, que significa que algo foi retirado da fila e ela não está mais cheia.
+
 chatBuffer[] = mensagem que o cliente digitou
 msgBuffer[] = recebe uma mensagem do servidor
 fullMsg[] = buffer contendo todas as informações
