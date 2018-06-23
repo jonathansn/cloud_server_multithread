@@ -26,9 +26,9 @@
 #define WAIT_TIME 0
 
 /*
-Queue implementation using a char array.
-Contains a mutex for functions to lock on before modifying the array,
-and condition variables for when it's not empty or full.
+Implementação de fila usando uma matriz char.
+Contém um mutex para funções a serem bloqueadas antes de modificar a matriz,
+e variáveis de condição para quando não está vazio ou cheio.
 */
 typedef struct {
     char *buffer[MAX_BUFFER];
@@ -39,9 +39,9 @@ typedef struct {
 } queue;
 
 /*
-Struct containing important data for the server to work.
-Namely the list of client sockets, that list's mutex,
-the server's socket for new connections, and the message queue
+Estrutura contendo dados importantes para o servidor funcionar.
+Ou seja, a lista de sockets do cliente, o mutex dessa lista,
+o soquete do servidor para novas conexões e a fila de mensagens
 */
 typedef struct {
     fd_set serverReadFds;
@@ -53,8 +53,8 @@ typedef struct {
 } connDataVars;
 
 /*
-Simple struct to hold the connDataVars and the new client's socket fd.
-Used only in the client handler thread.
+Estrutura simples para manter o connDataVars e o novo socket_fd do cliente.
+Usado apenas no encadeamento do manipulador de clientes.
 */
 typedef struct {
     connDataVars *data;
