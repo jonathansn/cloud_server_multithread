@@ -315,18 +315,16 @@ void buildMessage(char *fullMsg, char *msgBuffer, int clientSocketFd){
     sprintf(fullMsg, "%d", clientSocketFd);
     strcat(fullMsg, ":");
     strcat(fullMsg, msgBuffer);
-
 }
 
 int splitBuffer(char *fullMsg){
 
-    char *socket, *hostname, *msg;
+    char **msg;
     char delimiters[] = ":";    
     char *token, *splitMsg;
-    int bufferSize = strlen(fullMsg);
-    int i = 0, clientFd;
+    int clientFd;
 
-    memcpy(splitMsg, fullMsg, 20);
+    memcpy(splitMsg, fullMsg, MAX_BUFFER);
     
     token = strsep(&splitMsg, delimiters);
     printf("socket: %s\n", token);
@@ -335,10 +333,72 @@ int splitBuffer(char *fullMsg){
        
     token = strsep(&splitMsg, delimiters);
     printf("Hostname: %s\n", token);
-       
+
     token = strsep(&splitMsg, delimiters);
     printf("Message: %s\n", token);
+    
+    if (strlen(token) > 1){
+        memcpy(msg, &token,  sizeof(token));
+        exeAction(msg[0]);
+    }
 
     return clientFd;
-
 }
+
+
+command *splitMsg(char *msg){
+    char *token;
+    char delimiters[] = " ";
+    command *c = (command*)malloc(sizeof(command));
+    
+    token = strsep(&msg, delimiters);
+    c->com = malloc(sizeof(char) * (strlen(token) + 1));
+    strcpy(c->com, token);
+
+    token = strsep(&msg, delimiters);
+    if (token != NULL){
+        c->msg = malloc(sizeof(char) * (strlen(token) + 1));
+        strcpy(c->msg, token);
+    }else{
+        c->msg = NULL;
+    }
+    return c;
+}
+
+void exeAction(char *msg){
+    char *name;
+    int resp;
+    strtok(msg, "\n");
+
+    command *c;
+
+    if(!strcmp(msg, "ls")){
+        showDir(NULL);
+        return;
+    }
+
+    c = splitMsg(msg);
+    if(c->msg != NULL){
+        if(!strcmp(c->com, "mkdir")){    
+            resp = createFolder(c->msg);
+        }       
+        if(!strcmp(c->com, "mkfile")){    
+            resp = createFile(c->msg);
+        }      
+        if(!strcmp(c->com, "rmfolder")){    
+            resp = deleteFolder(c->msg);
+        }
+        if(!strcmp(c->com, "rmfile")){    
+            resp = deleteFile(c->msg);
+        }
+        if(!strcmp(c->com, "cpfile")){    
+            //resp = copyFile(c->msg);
+        }         
+
+    }else{
+        free(c);
+        return;
+    }
+    free(c);
+}
+

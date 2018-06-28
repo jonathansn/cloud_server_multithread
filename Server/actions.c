@@ -1,24 +1,26 @@
 #include "actions.h"
 
 int createFolder(char str[]){
+
 	pid_t childpid;
 	childpid=fork();
 
+
 	if(childpid == -1){
 		perror("Fork failed");
-		return 1;
+		return -1;
 	}
 	if(childpid == 0){   
 		if(showDir(str)){ 
-			printf("Folder %s already exists!\n", str);
+			printf("Server side, Folder %s already exists!\n", str);
+			return 0;
 		}else{
-			printf("Folder %s created!\n", str);
+			printf("Server side, Folder %s created!\n", str);
 			execl("/bin/mkdir", "mkdir", str, NULL);
 			perror("Child failed to exec");
-			return 1;
 		}
 	}
-	return EXIT_FAILURE;
+	return 1;
 }
 
 int createFile (char str[]){
@@ -27,19 +29,20 @@ int createFile (char str[]){
 
 	if(childpid == -1){
 		perror("Fork failed");
-		return 1;
+		return -1;
 	}
 	if(childpid == 0){   
 		if(showDir(str)){ 
 			printf("File %s already exists!\n", str);
+			return 0;
 		}else{
 			printf("File %s created!\n", str);
 			execl("/usr/bin/touch", "touch", str, NULL);
 			perror("Child failed to exec");
-			return 1;
+
 		}
 	}
-	return EXIT_FAILURE;
+	return 1;
 }
 
 
@@ -77,7 +80,7 @@ int deleteFolder(char str[]){
 
 	if(childpid == -1){
 		perror("Fork failed");
-		return 1;
+		return -1;
 	}
 	if(childpid == 0){   
 		if(showDir(str)){ 			
@@ -86,13 +89,11 @@ int deleteFolder(char str[]){
 			perror("Child failed to exec");
 		}else{
 			printf("Folder %s not found\n", str);
-			return 1;
+			return 0;
 		}
 	}
-	return EXIT_FAILURE;
+	return 1;
 }
-
-
 
 
 int deleteFile(char str[]){
@@ -101,7 +102,7 @@ int deleteFile(char str[]){
 
 	if(childpid == -1){
 		perror("Fork failed");
-		return 1;
+		return -1;
 	}
 	if(childpid == 0){   
 		if(showDir(str)){ 
@@ -111,12 +112,27 @@ int deleteFile(char str[]){
 		}else{
 			printf("File %s not found\n", str);
 			
-			return 1;
+			return 0;
 		}
 	}
-	return EXIT_FAILURE;
+	return 1;
 }
 
 int copyFile(char *source, char *destiny){
-	execl("/usr/bin/cp", "cp", &source, &destiny, NULL);
+	pid_t childpid;
+	childpid=fork();
+
+	if(childpid == -1){
+		perror("Fork failed");
+		return -1;
+	}
+	if(childpid == 0){
+		if(showDir(source)){ 
+			execl("/usr/bin/cp", "cp", source, destiny, NULL);
+		}else{
+			printf("File %s not found\n", source);
+			return 0;
+		}
+	}
+	return 1;
 }
