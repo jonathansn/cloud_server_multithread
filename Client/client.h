@@ -16,7 +16,7 @@
 #include <signal.h>
 
 #include "color.h"
-#include "menu.h"
+
 
 #define MAX_BUFFER 1024
 
