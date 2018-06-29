@@ -16,6 +16,8 @@
 #include <pthread.h>
 #include <string.h>
 #include <stddef.h>
+#include <sys/stat.h>
+
 
 #include "color.h"
 #include "actions.h"
@@ -24,6 +26,8 @@
 #define DEFAULT_PORT 8000
 
 #define WAIT_TIME 0
+
+pthread_mutex_t lock_pipe;
 
 /*
 Implementação de fila usando uma matriz char.
@@ -87,4 +91,6 @@ char* queuePop(queue *q);
 
 void buildMessage(char *fullMsg, char *msgBuffer, int clientSocketFd);
 
+
+void *pipeWriter(void *str);
 #endif

@@ -368,8 +368,12 @@ command *splitMsg(char *msg){
 void exeAction(char *msg){
     char *name;
     int resp;
-    strtok(msg, "\n");
+    char *theMsg;
+    
+    pthread_t tId;
+    pthread_mutex_init(&lock_pipe, NULL);
 
+    strtok(msg, "\n");
     command *c;
 
     if(!strcmp(msg, "ls")){
@@ -377,11 +381,22 @@ void exeAction(char *msg){
         return;
     }
 
+
     c = splitMsg(msg);
     if(c->msg != NULL){
         if(!strcmp(c->com, "mkdir")){    
-            resp = createFolder(c->msg);
+        
+            pthread_mutex_lock(&lock_pipe);
+        
+            printf("wait for read...");
+        
+            pthread_create(&tId, NULL, pipeWriter, (void *) c->msg);
+            pthread_join(tId, NULL);
+
+            pthread_mutex_unlock(&lock_pipe);
         }       
+
+
         if(!strcmp(c->com, "mkfile")){    
             resp = createFile(c->msg);
         }      
@@ -402,3 +417,26 @@ void exeAction(char *msg){
     free(c);
 }
 
+
+void *pipeWriter(void *str){
+
+    int fd;
+    char *myFifo = "/tmp/myfifo";
+    char *strPipe;
+
+    strPipe = str;
+
+    /* remove the Fifo if it already exist */  
+    unlink(myFifo);
+
+    /* create the FIFO (named pipe) */
+    mkfifo(myFifo, 0666);
+
+    /* write to the FIFO */
+    fd = open(myFifo, O_WRONLY);
+    write(fd, strPipe, 50);
+    close(fd);
+
+    /* remove the FIFO */
+    unlink(myFifo);
+}

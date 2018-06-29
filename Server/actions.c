@@ -1,27 +1,39 @@
 #include "actions.h"
 
+
+
 int createFolder(char str[]){
+	printf("+++++++++++++++creats: %s ", str);
 
-	pid_t childpid;
-	childpid=fork();
-
-
-	if(childpid == -1){
-		perror("Fork failed");
-		return -1;
-	}
-	if(childpid == 0){   
-		if(showDir(str)){ 
-			printf("Server side, Folder %s already exists!\n", str);
-			return 0;
-		}else{
-			printf("Server side, Folder %s created!\n", str);
-			execl("/bin/mkdir", "mkdir", str, NULL);
-			perror("Child failed to exec");
-		}
-	}
-	return 1;
+return 1;
 }
+
+
+
+
+
+// int createFolder(char str[]){
+
+// 	pid_t childpid;
+// 	childpid=fork();
+
+
+// 	if(childpid == -1){
+// 		perror("Fork failed");
+// 		return -1;
+// 	}
+// 	if(childpid == 0){   
+// 		if(showDir(str)){ 
+// 			printf("Server side, Folder %s already exists!\n", str);
+// 			return 0;
+// 		}else{
+// 			printf("Server side, Folder %s created!\n", str);
+// 			execl("/bin/mkdir", "mkdir", str, NULL);
+// 			perror("Child failed to exec");
+// 		}
+// 	}
+// 	return 1;
+// }
 
 int createFile (char str[]){
 	pid_t childpid;

@@ -17,7 +17,13 @@ void pipeWriter(){
 
     /* remove the FIFO */
     unlink(myFifo);
+}
 
+
+int main(int argc, char const *argv[])
+{
+    pipeWriter();
+    
+    
     return 0;
-
 }

@@ -5,7 +5,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-
-void pipeReader();
+#include <stdio.h>
+void *pipeReader();
 
 #endif
