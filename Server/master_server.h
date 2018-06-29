@@ -27,7 +27,8 @@
 
 #define WAIT_TIME 0
 
-pthread_mutex_t lock_pipe;
+pthread_mutex_t lock_pipeDir;
+pthread_mutex_t lock_pipeFile;
 
 /*
 Implementação de fila usando uma matriz char.
@@ -92,5 +93,6 @@ char* queuePop(queue *q);
 void buildMessage(char *fullMsg, char *msgBuffer, int clientSocketFd);
 
 
-void *pipeWriter(void *str);
+void *pipeWriterDir(void *str);
+void *pipeWriterFile(void *str);
 #endif

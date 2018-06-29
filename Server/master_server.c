@@ -371,7 +371,8 @@ void exeAction(char *msg){
     char *theMsg;
     
     pthread_t tId;
-    pthread_mutex_init(&lock_pipe, NULL);
+    pthread_mutex_init(&lock_pipeDir, NULL);
+    pthread_mutex_init(&lock_pipeFile, NULL);
 
     strtok(msg, "\n");
     command *c;
@@ -386,19 +387,29 @@ void exeAction(char *msg){
     if(c->msg != NULL){
         if(!strcmp(c->com, "mkdir")){    
         
-            pthread_mutex_lock(&lock_pipe);
+            pthread_mutex_lock(&lock_pipeDir);
         
-            printf("wait for read...");
+            printf("wait for read Dir...");
         
-            pthread_create(&tId, NULL, pipeWriter, (void *) c->msg);
+            pthread_create(&tId, NULL, pipeWriterDir, (void *) c->msg);
             pthread_join(tId, NULL);
 
-            pthread_mutex_unlock(&lock_pipe);
+            pthread_mutex_unlock(&lock_pipeDir);
         }       
 
 
         if(!strcmp(c->com, "mkfile")){    
-            resp = createFile(c->msg);
+            
+            pthread_mutex_lock(&lock_pipeFile);
+        
+            printf("wait for read File...");
+        
+            pthread_create(&tId, NULL, pipeWriterFile, (void *) c->msg);
+            pthread_join(tId, NULL);
+
+            pthread_mutex_unlock(&lock_pipeFile);
+
+
         }      
         if(!strcmp(c->com, "rmfolder")){    
             resp = deleteFolder(c->msg);
@@ -418,10 +429,33 @@ void exeAction(char *msg){
 }
 
 
-void *pipeWriter(void *str){
+void *pipeWriterDir(void *str){
 
     int fd;
-    char *myFifo = "/tmp/myfifo";
+    char *myFifo = "/tmp/pipeDir";
+    char *strPipe;
+
+    strPipe = str;
+
+    /* remove the Fifo if it already exist */  
+    unlink(myFifo);
+
+    /* create the FIFO (named pipe) */
+    mkfifo(myFifo, 0666);
+
+    /* write to the FIFO */
+    fd = open(myFifo, O_WRONLY);
+    write(fd, strPipe, 50);
+    close(fd);
+
+    /* remove the FIFO */
+    unlink(myFifo);
+}
+
+void *pipeWriterFile(void *str){
+
+    int fd;
+    char *myFifo = "/tmp/pipeFile";
     char *strPipe;
 
     strPipe = str;
